@@ -7,30 +7,41 @@ def fetch_light_data():
     from the light-sensing app, such as a request to an API or
     reading a file/database.
     """
-    # Placeholder for light-sensing data
-    return True  # True means light detected, False means no light
+    
+    return True  
 
 def check_time_range(start_hour, end_hour):
     """Check if the current time is within the specified wake-up range."""
     now = datetime.now()
     return start_hour <= now.hour < end_hour
 
-from pydub import AudioSegment
-from pydub.playback import play
+from playsound import playsound 
 
-def play_sound():
-    sound = AudioSegment.from_file("C:/path/to/your/soundfile.mp3")  # Use an absolute path
-    play(sound)
-
+def trigger_alarm():
+    """Plays an alarm sound when triggered."""
+    print("Alarm! Light detected.")
+    playsound('song.mp3')
+    """Replace with path to your alarm sound"""
 
 def monitor_light(start_hour, end_hour):
     """Continuously checks for light detection within the specified wake-up hours."""
     while True:
         light_detected = fetch_light_data()
         if light_detected and check_time_range(start_hour, end_hour):
-            play_sound()
-            break  # Stop monitoring after triggering the alarm
-        time.sleep(10)  # Check every 10 seconds (adjust as needed)
+            trigger_alarm()
+            break
+        time.sleep(10)
+
+def main():
+    start_hour = 6
+    end_hour = 20
+
+    print(f"Monitoring light between {start_hour}:00 and {end_hour}:00...")
+    monitor_light(start_hour, end_hour)
+
+
+if __name__ == "__main__":
+    main()
 
 '''
 import tkinter as tk
