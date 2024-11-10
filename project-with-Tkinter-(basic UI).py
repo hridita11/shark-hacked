@@ -72,7 +72,6 @@ def monitor_light(start_hour, end_hour):
 def set_alarm():
     start_hour = int(entry1.get())
     end_hour = int(entry2.get())
-    messagebox.showinfo("Alarm", f"Alarm will monitor from {start_hour}:00 to {end_hour}:00.")
     Thread(target=monitor_light, args=(start_hour, end_hour)).start()
 
 # GUI Styling and Layout
