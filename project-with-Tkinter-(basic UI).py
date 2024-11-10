@@ -2,31 +2,29 @@ import time
 from datetime import datetime
 import csv
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import messagebox, ttk
 from threading import Thread
 import pygame  # For controlling audio playback
 
-# Initialize pygame mixer
+# Initialize pygame mixer for sound control
 pygame.mixer.init()
 
-file = 'Raw Data.csv'  # global
+filename = 'Raw Data.csv'  # global
 stop_monitoring = False  # Global flag to control the alarm monitoring
 
-def fetch_light_data(csv_filename):
-    with open(csv_filename, mode='r') as file:
+# Light data and time checking functions
+def fetch_light_data():
+    global filename
+    with open(filename, mode='r') as file:
         csv_reader = csv.reader(file)
         next(csv_reader)
         
         for row in csv_reader:
             try:
                 illuminance = float(row[1])
-                
-                # Check if the illuminance value is greater than 1000 lux
-                if illuminance > 1000:
+                if illuminance > 1000:  # Check if illuminance is above 1000 lux
                     return True
-                
             except (ValueError, IndexError):
-                # Ignore rows with non-numeric illuminance values or missing data
                 continue
     return False
 
@@ -34,40 +32,38 @@ def check_time_range(start_hour, end_hour):
     now = datetime.now()
     return start_hour <= now.hour < end_hour
 
+# Alarm trigger functions
 def trigger_alarm():
-    # Create a new window for the alarm
     alarm_window = tk.Toplevel(root)
     alarm_window.title("Alarm Triggered!")
-    alarm_window.geometry("300x150")
-    alarm_window.configure(bg="red")
+    alarm_window.geometry("350x200")
+    alarm_window.configure(bg="#FFE4E1")  # Light pink for alarm background
 
-    # Display message
-    label = tk.Label(alarm_window, text="Alarm! Light detected.", bg="red", fg="white", font=("Helvetica", 16))
+    label = tk.Label(alarm_window, text="ALARM! Light detected.", bg="#FFE4E1", fg="black", font=("Arial", 16, "bold"))
     label.pack(pady=20)
 
-    # Stop alarm button in the new window
-    stop_button = tk.Button(alarm_window, text="Stop Alarm", command=lambda: stop_alarm(alarm_window))
+    stop_button = ttk.Button(alarm_window, text="Stop Alarm", command=lambda: stop_alarm(alarm_window), style="Stop.TButton")
     stop_button.pack(pady=10)
 
-    # Play the alarm sound in a separate thread
     Thread(target=play_alarm_sound).start()
 
 def play_alarm_sound():
-    pygame.mixer.music.load('song.mp3')  # Replace with the path to your alarm sound file
-    pygame.mixer.music.play(-1)  # Loop the alarm sound until stopped
+    pygame.mixer.music.load('song.mp3')  # Path to alarm sound file
+    pygame.mixer.music.play(-1)  # Loop until stopped
 
 def stop_alarm(alarm_window=None):
     global stop_monitoring
-    stop_monitoring = True  # Stop monitoring
-    pygame.mixer.music.stop()  # Stop the alarm sound
+    stop_monitoring = True
+    pygame.mixer.music.stop()
     if alarm_window:
-        alarm_window.destroy()  # Close the alarm window if it exists
+        alarm_window.destroy()
 
-def monitor_light(start_hour, end_hour, file):
+# Main monitoring function
+def monitor_light(start_hour, end_hour):
     global stop_monitoring
     stop_monitoring = False
     while not stop_monitoring:
-        light_detected = fetch_light_data(file)
+        light_detected = fetch_light_data()
         if light_detected and check_time_range(start_hour, end_hour):
             trigger_alarm()
             break
@@ -77,47 +73,49 @@ def set_alarm():
     start_hour = int(entry1.get())
     end_hour = int(entry2.get())
     messagebox.showinfo("Alarm", f"Alarm will monitor from {start_hour}:00 to {end_hour}:00.")
-    Thread(target=monitor_light, args=(start_hour, end_hour, file)).start()
+    Thread(target=monitor_light, args=(start_hour, end_hour)).start()
 
-# Create the main window
+# GUI Styling and Layout
 root = tk.Tk()
-root.title("Black Themed GUI")
-root.geometry("300x250")
-root.configure(bg="black")
+root.title("Light Alarm App")
+root.geometry("400x300")
+root.configure(bg="#F0F8FF")  # Light blue background for readability
 
-# Configure the style
-label_style = {"bg": "black", "fg": "white"}
-entry_style = {"bg": "black", "fg": "white", "insertbackground": "white"}
-button_style = {"bg": "black", "fg": "white"}
+# Define styles
+style = ttk.Style()
+style.configure("TLabel", background="#F0F8FF", foreground="black", font=("Arial", 11))
+style.configure("TEntry", fieldbackground="#FFFFFF", foreground="black")  # White entry box background
+style.configure("TButton", background="#ADD8E6", foreground="black", font=("Arial", 10, "bold"), padding=10)
+style.configure("Stop.TButton", background="#FF6347", foreground="black", font=("Arial", 10, "bold"), padding=10)
+style.map("TButton", background=[("active", "#87CEFA")])  # Lighter blue for hover effect
 
-# Create the first label
-label1 = tk.Label(root, text="Start Hour:", **label_style)
+# Title Label
+title_label = tk.Label(root, text="Shine and Rise", bg="#F0F8FF", fg="black", font=("Arial", 16, "bold"))
+title_label.pack(pady=20)
+
+# Start hour entry
+label1 = ttk.Label(root, text="Start Hour:")
 label1.pack(pady=5)
-
-# Create the first entry
-entry1 = tk.Entry(root, **entry_style)
+entry1 = ttk.Entry(root, style="TEntry")
 entry1.pack(pady=5)
 
-# Create the second label
-label2 = tk.Label(root, text="End Hour:", **label_style)
+# End hour entry
+label2 = ttk.Label(root, text="End Hour:")
 label2.pack(pady=5)
-
-# Create the second entry
-entry2 = tk.Entry(root, **entry_style)
+entry2 = ttk.Entry(root, style="TEntry")
 entry2.pack(pady=5)
 
-# Create a Set Alarm button
-button_set = tk.Button(root, text="Set Alarm", command=set_alarm, **button_style)
-button_set.pack(pady=10)
+# Set Alarm button
+button_set = ttk.Button(root, text="Set Alarm", command=set_alarm, style="TButton")
+button_set.pack(pady=20)
 
-# Run the application
-root.mainloop()
+
 
 def main():
+    
+    # Run the application
+    root.mainloop()
 
-    monitor_light(start_hour, end_hour, file)
-
-
-
+    
 if __name__ == "__main__":
     main()
