@@ -42,34 +42,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-'''
-import tkinter as tk
-from tkinter import messagebox
-
-def start_alarm():
-    start_hour = int(start_hour_entry.get())
-    end_hour = int(end_hour_entry.get())
-    messagebox.showinfo("Alarm", f"Alarm will monitor from {start_hour}:00 to {end_hour}:00.")
-    monitor_light(start_hour, end_hour)  # Start light monitoring
-
-# Setup Tkinter UI
-root = tk.Tk()
-root.title("Light-Sensitive Alarm")
-
-tk.Label(root, text="Start Hour:").grid(row=0, column=0)
-start_hour_entry = tk.Entry(root)
-start_hour_entry.grid(row=0, column=1)
-start_hour_entry.insert(0, "6")  # Default start time
-
-tk.Label(root, text="End Hour:").grid(row=1, column=0)
-end_hour_entry = tk.Entry(root)
-end_hour_entry.grid(row=1, column=1)
-end_hour_entry.insert(0, "9")  # Default end time
-
-start_button = tk.Button(root, text="Start Alarm", command=start_alarm)
-start_button.grid(row=2, column=0, columnspan=2)
-
-root.mainloop()
-'''
-
