@@ -55,7 +55,7 @@ entry_style = {"bg": "black", "fg": "white", "insertbackground": "white"}
 button_style = {"bg": "black", "fg": "white"}
 
 # Create the first label
-label1 = tk.Label(root, text="Label 1:", **label_style)
+label1 = tk.Label(root, text="Start Hour:", **label_style)
 label1.pack(pady=5)
 
 # Create the first entry
@@ -63,7 +63,7 @@ entry1 = tk.Entry(root, **entry_style)
 entry1.pack(pady=5)
 
 # Create the second label
-label2 = tk.Label(root, text="Label 2:", **label_style)
+label2 = tk.Label(root, text="End Hour:", **label_style)
 label2.pack(pady=5)
 
 # Create the second entry
